@@ -237,23 +237,13 @@ model = load_embeddings("embeddings-Fr.txt")
 dic = read_table_asso(path_asso)
 iterations = 2
 query = "tristesse"
-sentences = ["Il n' y a pas de *NCFS000/littérature/littérature sans *NCMS000/péché/péché .",
-             "Il n' y a ni *NCFS000/morale/moral ni *NCFS000/responsabilité/responsabilité en *NCFS000/littérature/littérature .",
-             "En *NCFS000/littérature/littérature , la *NCFS000/première/premier *NCFS000/impression/impression *VMIP3S0/est/être la plus *AQ0FS00/forte/fort .",
-             "*NP00000/Amadeus_Mozart/amadeus_mozart *VMIP3S0/est/être à la *NCFS000/musique/musique ce que *NP00000/Jean_Nicolas_Arthur_Rimbaud/jean_nicolas_arthur_rimbaud à la *NCFS000/littérature/littérature .",
-             "Vous *VMIP2P0/pouvez/pouvoir *VMN0000/reconnaître/reconnaître leurs *NCFP000/harmonies/harmonie parmi de les *NCMP000/milliers/millier .",
-             "En *NCFS000/littérature/littérature , l' *NCMS000/amour/amour et l' *NCFS000/amitié/amitié *VAIP3P0/ont/avoir *VMP00SM/fait/faire *VMN0000/couler/couler beaucoup_d' *NCFS000/encre/encre .",
-             "Le nu en *NCFS000/peinture/peinture *VMIP3S0/est/être aussi *AQ0MN00/nauséeux/nauséeux et *AQ0MS00/assommant/assommant que l' *NCMS000/adultère/adultère en *NCFS000/littérature/littérature .",
-             "La *NCFS000/littérature/littérature *VMIP3S0/est/être une *NCFS000/maladie/maladie .",
-             "Ou peut-être un *NCMS000/remède/remède à une *NCFS000/maladie/maladie .",
-             "Vous le *VMIP2P0/répétez/répéter inlassablement et , à la *NCCS000/fin/fin , on vous *VMIP3S0/croit/croire .",
-             "Ceux qui *VMIP3P0/ont/avoir la *NCFS000/santé/santé n' *VMIP3P0/écrivent/écrire pas_de *NCCP000/livres/livre .",
-             "Il *VMIP3S0/faut/faillir *VMN0000/créer/créer , *VMN0000/inventer/inventer pour *VMN0000/faire/faire de la *NCFS000/littérature/littérature .",
-             "Les *NCCP000/critiques/critique *VMIP3P0/sont/être les *NCMP000/maquereaux/maquereau de la *NCFS000/littérature/littérature .",
-             "Le *NCMS000/journalisme/journalisme *VMIP3S0/est/être *AQ0CS00/illisible/illisible , et la *NCFS000/littérature/littérature n' *VSIP3S0/est/être pas *VMP00SF/lue/lire .",
-             "L' *NCMS000/enseignement/enseignement de les *NCFP000/lettres/lettre *VMIP3S0/est/être à la *NCFS000/littérature/littérature ce_que la *NCFS000/gynécologie/gynécologie *VMIP3S0/est/être à l' *NCMS000/érotisme/érotisme .",
-             "Les *NCMP000/professeurs/professeur de *NCFP000/lettres/lettre *VMIP3P0/connaissent/connaître de la *NCFS000/littérature/littérature ce_que les *NCFP000/prostituées/prostitué *VMIP3P0/connaissent/connaître de l' *NCMS000/amour/amour .",
-             ]
+sentences = [    "Il n' y a pas_de *NCFS000/littérature/littérature sans *NCMS000/péché/péché .",
+    "Il n' y a ni *AQ0FS00/morale/moral ni *NCFS000/responsabilité/responsabilité en *NCFS000/littérature/littérature .",
+    "En *NCFS000/littérature/littérature , la *AQ0FS00/première/premier *NCFS000/impression/impression *VMIP3S0/est/être la plus *AQ0FS00/forte/fort",
+    "La *NCFS000/littérature/littérature *VMIP3S0/est/être une *NCFS000/maladie/maladie .",
+    "L' *NCMS000/enseignement/enseignement de les *NCFP000/lettres/lettre *VMIP3S0/est/être à la *NCFS000/littérature/littérature ce_que la *NCFS000/gynécologie/gynécologie *VMIP3S0/est/être à l' *NCMS000/érotisme/érotisme .",
+    "Les *NCMP000/professeurs/professeur de *NCFP000/lettres/lettre *VMIP3P0/connaissent/connaître de la *NCFS000/littérature/littérature ce_que les *NCFP000/prostituées/prostitué *VMIP3P0/connaissent/connaître de l' *NCMS000/amour/amour .'"
+]
 
 
 df = pd.read_csv("2_grams0.csv")
