@@ -99,7 +99,7 @@ def sentence_generation_n_grams(data, start, length = -1, display = False, weigh
     end_sentence = False
 
     if (length != -1):
-        for i in range(length - 1):
+        for i in range(length - 2):
             for j in range(len(data)):
                 if(len(currents) > len(data)):
                     del currents[0]
@@ -144,7 +144,7 @@ print("#########################################################################
 print("Extraction des bigrams étape 1")
 
 # charge les bigrams sur tout le corpus de données
-df = pd.read_csv("2_grams0.csv")
+df = pd.read_csv("/home/ubuntu/M2S2/defi/Fichiers csv/2_grams0.csv")
 partie1 = df["Partie1"].values
 partie2 = df["Partie2"].values
 sup = df["Support"]
@@ -157,7 +157,7 @@ for i in range(len(partie1)):
 print("Extraction des bigrams étape 2")
 
 # charge les bigrams de début de phrases sur tout le corpus de données
-df = pd.read_csv("2_grams_begin.csv")
+df = pd.read_csv("/home/ubuntu/M2S2/defi/Fichiers csv/2_grams_begin.csv")
 partie1 = df["Partie1"].values
 partie2 = df["Partie2"].values
 sup = df["Support"]
@@ -170,7 +170,7 @@ for i in range(len(partie1)):
 print("Extraction des trigrams étape 1")
 
 # charge les trigrams de la motié des fichiers disponibles
-df = pd.read_csv("fusion_0_1.csv")
+df = pd.read_csv("/home/ubuntu/M2S2/defi/Fichiers csv/fusion_0_1.csv")
 partie1 = df["Partie1"].values
 partie2 = df["Partie2"].values
 partie3 = df["Partie3"].values
@@ -184,7 +184,7 @@ for i in range(len(partie1)):
 print("Extraction des trigrams étape 2")
 
 # charge les trigrams de début de phrases de la motié des fichiers disponibles
-df = pd.read_csv("fusion_begin_0_1.csv")
+df = pd.read_csv("/home/ubuntu/M2S2/defi/Fichiers csv/fusion_begin_0_1.csv")
 partie1 = df["Partie1"].values
 partie2 = df["Partie2"].values
 partie3 = df["Partie3"].values
@@ -200,9 +200,21 @@ print("Fin des extractions")
 # liste des mots possible en tant que début de phrase
 starts = ["Je", "Tu", "Il", "Elle", "On", "Nous", "Vous", "Ils", "Elles", "Le", "La", "Les", "Un", "Une", "Des", "Qui", "Que", "Quoi", "Où"]
 
-num_generation = 100
+weights = [1, 3, 5, 10]
+num_generation = 20
+lengths = [5, 10, 15]
 
-print("------------------------- weight 3: -------------------------")
-
-for i in range(num_generation):
-    print(sentence_generation([data_tri, data_bi], data_bi_start, choice(starts), weight = 3))
+for l in lengths:
+    print("Version avec taille fixe ", l)
+    print("")
+    for j in weights:
+        print("poids de ", j)
+        for i in range(num_generation):
+            print(sentence_generation([data_tri, data_bi],data_bi_start, choice(starts),  length=l, weight = j))
+    print("")
+print("Version sans taille fixe")
+print("")
+for j in weights:
+    print("poids de ", j)
+    for i in range(num_generation*len(lengths)):
+        print(sentence_generation([data_tri, data_bi], data_bi_start, choice(starts), weight = j))
