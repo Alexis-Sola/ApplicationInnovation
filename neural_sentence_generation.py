@@ -187,7 +187,18 @@ def extract_info(sentence):
     return assoc, words, lems, preds, preds_index
 
 # retourne tout les mots à placer dans la phrase
-def words_generation(model, dictionnary, query, sentences, iterations=1, euclidean = True, bigrams = None):
+def words_generation(model, dictionnary, query, sentences, iterations=1, euclidean = True, bigrams_path = None):
+    if(bigrams_path != None):
+        df = pd.read_csv(bigrams_path)
+        partie1 = df["Partie1"].values
+        partie2 = df["Partie2"].values
+        sup = df["Support"]
+
+        dictionnary = {}
+
+        for i in range(len(partie1)):
+            dictionnary.update({(partie1[i], partie2[i]): sup[i]})
+
     count = 0
     result = []
     for sentence in sentences:
@@ -200,8 +211,8 @@ def words_generation(model, dictionnary, query, sentences, iterations=1, euclide
             #print("Step ", i + 1, " for sentence ", count)
             w = []
             for j in range(len(assoc)):
-                if(bigrams != None):
-                    closer = (get_closer2(model, query, preds[i], dictionnary[assoc[j]], words[j], bigrams, forbidden_words, euclidean=euclidean))
+                if(bigrams_path != None):
+                    closer = (get_closer2(model, query, preds[i], dictionnary[assoc[j]], words[j], dictionnary, forbidden_words, euclidean=euclidean))
                 else:
                     closer = (get_closer(model, query, dictionnary[assoc[j]], words[j], forbidden_words, euclidean = euclidean))
 
@@ -217,7 +228,6 @@ def sentences_generations(generated_words, sentences):
     generations = []
     for i in range(len(sentences)):
         assoc, words, lems, preds, index = extract_info(sentences[i])
-        print(preds)
         for j in generated_words[i]:
             generation = sentences[i]
             for k in range(len(j)):
@@ -232,12 +242,18 @@ print("########################################## MAIN #########################
 print("###############################################################################################################")
 
 
-path_asso = "TableAssociative"
-model = load_embeddings("embeddings-Fr.txt")
+path_asso = "/home/ubuntu/M2S2/defi/Ressources Neuronales+Table associative+Structures grammaticales -20211115/TableAssociative"
+model = load_embeddings("/home/ubuntu/M2S2/defi/Ressources Neuronales+Table associative+Structures grammaticales -20211115/embeddings-Fr.txt")
 dic = read_table_asso(path_asso)
-iterations = 2
-query = "tristesse"
-sentences = [    "Il n' y a pas_de *NCFS000/littérature/littérature sans *NCMS000/péché/péché .",
+# doit contenir le chemin vers le fichier contenant les bigrams avec les règles suivantes:
+# la première colonne doit s'appeller Partie1 et elle doit contenir la première partie des bigrams
+# la deuxième colonne doit s'appeller Partie2 et elle doit contnire la seconde partie des bigrams
+# la troisième colonne doit s'appeller Support et elle doit contenir les occurences des bigrams de la ligne
+bigrams_path = "/home/ubuntu/M2S2/defi/Fichiers csv/2_grams0.csv"
+iterations = 1
+queries = ["tristesse", "amour", "joie", "haine", "bleu"]
+sentences = [
+    "Il n' y a pas_de *NCFS000/littérature/littérature sans *NCMS000/péché/péché .",
     "Il n' y a ni *AQ0FS00/morale/moral ni *NCFS000/responsabilité/responsabilité en *NCFS000/littérature/littérature .",
     "En *NCFS000/littérature/littérature , la *AQ0FS00/première/premier *NCFS000/impression/impression *VMIP3S0/est/être la plus *AQ0FS00/forte/fort",
     "La *NCFS000/littérature/littérature *VMIP3S0/est/être une *NCFS000/maladie/maladie .",
@@ -246,49 +262,34 @@ sentences = [    "Il n' y a pas_de *NCFS000/littérature/littérature sans *NCMS
 ]
 
 
-df = pd.read_csv("2_grams0.csv")
-partie1 = df["Partie1"].values
-partie2 = df["Partie2"].values
-sup = df["Support"]
+print("__________________ Euclidean distance without bigrams __________________")
+for query in queries:
+    words = (words_generation(model, dic, query, sentences, iterations=iterations, euclidean = True))
+    generations = sentences_generations(words, sentences)
 
-
-dictionnary = {}
-
-for i in range(len(partie1)):
-    dictionnary.update({(partie1[i], partie2[i]): sup[i]})
-
-
-data_bi = []
-
-for i in range(len(partie1)):
-    data_bi.append([partie1[i], partie2[i], sup[i]])
-
-
-
-print("__________________ Euclidean distance without bigram__________________")
-words = (words_generation(model, dic, query, sentences, iterations=iterations, euclidean = True))
-generations = sentences_generations(words, sentences)
-
-for i in range(len(generations)):
-    if(i % iterations == 0):
-        print("")
-    print(generations[i])
+    for i in range(len(generations)):
+        print(generations[i] + "\t" + query)
 
 print("__________________ Euclidean distance with bigrams __________________")
-words = (words_generation(model, dic, query, sentences, iterations=iterations, euclidean = True, bigrams=dictionnary))
-generations = sentences_generations(words, sentences)
+for query in queries:
+    words = (words_generation(model, dic, query, sentences, iterations=iterations, euclidean = True, bigrams_path=bigrams_path))
+    generations = sentences_generations(words, sentences)
 
-for i in range(len(generations)):
-    if(i % iterations == 0):
-        print("")
-    print(generations[i])
+    for i in range(len(generations)):
+        print(generations[i] + "\t" + query)
+        
+print("__________________ Cosine Similarity without bigrams __________________")
+for query in queries:
+    words = (words_generation(model, dic, query, sentences, iterations=iterations, euclidean = False))
+    generations = sentences_generations(words, sentences)
 
-print("__________________ Cosine similarity __________________")
+    for i in range(len(generations)):
+        print(generations[i] + "\t" + query)
 
-words = (words_generation(model, dic, query, sentences, iterations=iterations, euclidean = False))
-generations = sentences_generations(words, sentences)
+print("__________________ Cosine Similarity with bigrams __________________")
+for query in queries:
+    words = (words_generation(model, dic, query, sentences, iterations=iterations, euclidean=False, bigrams_path=bigrams_path))
+    generations = sentences_generations(words, sentences)
 
-for i in range(len(generations)):
-    if (i % iterations == 0):
-        print("")
-    print(generations[i])
+    for i in range(len(generations)):
+        print(generations[i] + "\t" + query)
