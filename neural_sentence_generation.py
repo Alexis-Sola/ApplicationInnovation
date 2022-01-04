@@ -194,10 +194,10 @@ def words_generation(model, dictionnary, query, sentences, iterations=1, euclide
         partie2 = df["Partie2"].values
         sup = df["Support"]
 
-        dictionnary = {}
+        bigrams = {}
 
         for i in range(len(partie1)):
-            dictionnary.update({(partie1[i], partie2[i]): sup[i]})
+            bigrams.update({(partie1[i], partie2[i]): sup[i]})
 
     count = 0
     result = []
@@ -212,7 +212,7 @@ def words_generation(model, dictionnary, query, sentences, iterations=1, euclide
             w = []
             for j in range(len(assoc)):
                 if(bigrams_path != None):
-                    closer = (get_closer2(model, query, preds[i], dictionnary[assoc[j]], words[j], dictionnary, forbidden_words, euclidean=euclidean))
+                    closer = (get_closer2(model, query, preds[i], dictionnary[assoc[j]], words[j], bigrams, forbidden_words, euclidean=euclidean))
                 else:
                     closer = (get_closer(model, query, dictionnary[assoc[j]], words[j], forbidden_words, euclidean = euclidean))
 
@@ -251,7 +251,7 @@ dic = read_table_asso(path_asso)
 # la troisième colonne doit s'appeller Support et elle doit contenir les occurences des bigrams de la ligne
 bigrams_path = "/home/ubuntu/M2S2/defi/Fichiers csv/2_grams0.csv"
 iterations = 1
-queries = ["tristesse", "amour", "joie", "haine", "bleu"]
+queries = ["tristesse", "amour", "bleu"]
 sentences = [
     "Il n' y a pas_de *NCFS000/littérature/littérature sans *NCMS000/péché/péché .",
     "Il n' y a ni *AQ0FS00/morale/moral ni *NCFS000/responsabilité/responsabilité en *NCFS000/littérature/littérature .",
@@ -259,6 +259,10 @@ sentences = [
     "La *NCFS000/littérature/littérature *VMIP3S0/est/être une *NCFS000/maladie/maladie .",
     "L' *NCMS000/enseignement/enseignement de les *NCFP000/lettres/lettre *VMIP3S0/est/être à la *NCFS000/littérature/littérature ce_que la *NCFS000/gynécologie/gynécologie *VMIP3S0/est/être à l' *NCMS000/érotisme/érotisme .",
     "Les *NCMP000/professeurs/professeur de *NCFP000/lettres/lettre *VMIP3P0/connaissent/connaître de la *NCFS000/littérature/littérature ce_que les *NCFP000/prostituées/prostitué *VMIP3P0/connaissent/connaître de l' *NCMS000/amour/amour .'"
+]
+
+sentences = [
+    "Il n' y a pas de *NCFS000/littérature/littérature sans *NCMS000/péché/péché ."
 ]
 
 
@@ -277,7 +281,7 @@ for query in queries:
 
     for i in range(len(generations)):
         print(generations[i] + "\t" + query)
-        
+
 print("__________________ Cosine Similarity without bigrams __________________")
 for query in queries:
     words = (words_generation(model, dic, query, sentences, iterations=iterations, euclidean = False))
